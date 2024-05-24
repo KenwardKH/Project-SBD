@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -28,5 +29,20 @@ class Post extends Model
     protected $casts = [
         'date_posted' => 'datetime',
     ];
-}
 
+    /**
+     * Get the categories for the post.
+     */
+    public function categories()
+    {
+        return $this->belongsToMany(Category::class, 'post_categories', 'post_id', 'category_id');
+    }
+
+    /**
+     * Get the tags for the post.
+     */
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class, 'post_tags', 'post_id', 'tag_id');
+    }
+}

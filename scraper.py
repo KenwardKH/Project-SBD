@@ -7,7 +7,7 @@ db = mysql.connector.connect(
     host="127.0.0.1",
     user="root",
     password="",
-    database="project-sbd"
+    database="self_ref_test"
 )
 cursor = db.cursor()
 
