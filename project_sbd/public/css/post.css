@@ -1,0 +1,44 @@
+table {
+    border: solid;
+    border-collapse: collapse
+}
+tr,td,th {
+    border: solid
+}
+.pagination {
+    text-align: center;
+    flex-direction: column;
+    height: 150px;
+    justify-content: space-around;
+}
+.pagination svg{
+    width: 16px;
+}
+table .img{
+    padding: 0;
+}
+table td .image{
+    object-fit: contain
+}
+table td {
+    text-align: center;
+}
+table {
+    width: 80%;
+}
+.main {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+h1{
+    font-size: large;
+    font-weight: 500;
+}
+
+.search-btn {
+    background-color: blue;
+    color: white;
+}

@@ -13,9 +13,26 @@ class PostController extends Controller
     public function index()
     {
         // Fetch all posts from the database
-        $posts = Post::all();
+        $posts = Post::paginate(10);
 
         // Return the view with the posts data
+        return view('post', ['posts' => $posts]);
+    }
+
+    public function postsWithTag(Request $request)
+    {
+        $tagName = $request->input('search');
+
+        // Fetch posts that have the specified tag
+        $posts = Post::select('posts.id', 'posts.title', 'posts.image', 'posts.date_posted')
+            ->join('post_tags', 'posts.id', '=', 'post_tags.post_id')
+            ->join('tags', 'post_tags.tag_id', '=', 'tags.id')
+            ->where('tags.name', $tagName)
+            ->paginate(10); // Using pagination for better performance
+
+        // Append the search term to the pagination links
+        $posts->appends(['search' => $tagName]);
+
         return view('post', ['posts' => $posts]);
     }
 
