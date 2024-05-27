@@ -3,21 +3,22 @@
 
 <head>
     <title>Post</title>
-    <style>
-        table {
-            border-collapse: collapse
-        }
-    </style>
+    <link rel="stylesheet" href="{{ asset('css/post.css') }}">
 </head>
 
 <body>
+    <div class="main">
     <h1>Post</h1>
+    <form action="{{ route('posts.search') }}" method="GET">
+        <input class="search" type="text" name="search" placeholder="Search by tag..." value="{{ request('search') }}">
+        <button class="hidden xl:inline-flex items-center text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center ml-1 sm:ml-3" type="submit">Search</button>
+    </form>
     <table border="solid">
         <thead>
             <tr>
                 <th>ID</th>
                 <th>Title</th>
-                <th>Content</th>
+                <th style="width: 250px">Content</th>
                 <th>Date Posted</th>
                 <th>Category</th>
                 <th>Tags</th>
@@ -28,7 +29,7 @@
                 <tr>
                     <td>{{ $post->id }}</td>
                     <td>{{ $post->title }}</td>
-                    <td class="py-2 text-center"><img style="width: 250px" src="{{ $post->image }}" alt="image"></td>
+                    <td class="img text-center"><img class="image" style="width: 250px" src="{{ $post->image }}" alt="image"></td>
                     <td>{{ $post->date_posted }}</td>
                     <td>
                         <ul>
@@ -48,8 +49,12 @@
             @endforeach
         </tbody>
     </table>
-    
 
+    <div class="pagination">
+        {{ $posts->links() }}
+    </div>
+    
+    </div>
 </body>
 
 </html>

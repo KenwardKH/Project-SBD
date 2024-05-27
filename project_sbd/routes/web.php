@@ -11,3 +11,8 @@ Route::get('/', function () {
 use App\Http\Controllers\PostController;
 
 Route::get('/posts', [PostController::class, 'index']);
+
+Route::get('/posts/search', [PostController::class, 'postsWithTag'])->name('posts.search');
+
+
+
