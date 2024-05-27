@@ -27,7 +27,7 @@ def scrape_url(url):
             
             for article in articles:
                 # Find the article title
-                title_tag = article.find('h2', class_='entry-title')
+                title_tag = article.find('h3', class_='entry-title')
                 title = title_tag.text.strip() if title_tag else 'N/A'
                 
                 # Check if the title already exists in the database
@@ -39,7 +39,7 @@ def scrape_url(url):
                     continue
                 
                 # Find the post meta information containing "Posted in" and categories
-                post_meta = article.find('div', class_='kt-blocks-post-top-meta')
+                post_meta = article.find('div', class_='kt-blocks-categories kt-blocks-post-footer-section')
                 if post_meta:
                     # Find all categories in this article
                     categories = post_meta.find_all('a', rel='category tag')
@@ -90,21 +90,29 @@ def scrape_url(url):
     except Exception as e:
         print("An error occurred:", e)
         db.rollback()  # Rollback the changes if any exception occurs
-    # finally:
-        # Close the cursor and connection
 
-# Example usage
+
 
 # Call the function with URLs to scrape
-scrape_url('https://www.divergenttravelers.com/travel-itineraries/')
-scrape_url('https://www.divergenttravelers.com/travel-inspiration/')
-scrape_url('https://www.divergenttravelers.com/cultural-experiences/')
-scrape_url('https://www.divergenttravelers.com/cruise-travel/')
-scrape_url('https://www.divergenttravelers.com/hiking-trips/')
-scrape_url('https://www.divergenttravelers.com/best-kayaking-adventures/')
-scrape_url('https://www.divergenttravelers.com/polar-expedition-travel/')
-scrape_url('https://www.divergenttravelers.com/road-trips/')
-scrape_url('https://www.divergenttravelers.com/tropical-destinations/')
-scrape_url('https://www.divergenttravelers.com/wildlife-experiences/')
+scrape_url('https://www.divergenttravelers.com/africa-travel-guide/')
+scrape_url('https://www.divergenttravelers.com/travel-guides/antarctica-travel-planning/')
+scrape_url('https://www.divergenttravelers.com/asia-travel-guide/')
+scrape_url('https://www.divergenttravelers.com/southeast-asia-travel-guide/')
+scrape_url('https://www.divergenttravelers.com/caribbean-islands-travel-guide/')
+scrape_url('https://www.divergenttravelers.com/central-america-travel-guide/')
+scrape_url('https://www.divergenttravelers.com/europe-travel-planner/')
+scrape_url('https://www.divergenttravelers.com/middle-east-travel-guide/')
+scrape_url('https://www.divergenttravelers.com/north-america-travel-guide/')
+scrape_url('https://www.divergenttravelers.com/oceania-travel-guide/')
+scrape_url('https://www.divergenttravelers.com/south-america-travel-guide/')
+scrape_url('https://www.divergenttravelers.com/travel-guides/travel-the-usa/')
+scrape_url('https://www.divergenttravelers.com/travel-guides/alaska-travel-tips/')
+scrape_url('https://www.divergenttravelers.com/travel-guides/hawaii-travel-tips/')
+scrape_url('https://www.divergenttravelers.com/travel-photography/')
+# scrape_url('')
+# scrape_url('')
+# scrape_url('')
+# scrape_url('')
+
 cursor.close()
 db.close()
