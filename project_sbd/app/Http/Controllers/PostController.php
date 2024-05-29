@@ -35,7 +35,7 @@ class PostController extends Controller
         ->where(function($query) use ($searchTerm) {
             $query->where('tags.name', $searchTerm)
                   ->orWhere('posts.title', 'like', '%' . $searchTerm . '%')
-                  ->orWhere('categories.name', 'like', '%' . $searchTerm . '%');
+                  ->orWhere  ('categories.name', 'like', '%' . $searchTerm . '%');
         })
         ->distinct() // Ensure distinct posts are selected
         ->paginate(10); // Using pagination for better performance
