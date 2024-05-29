@@ -23,21 +23,28 @@ class PostController extends Controller
     }
 
     public function postsWithTag(Request $request)
-    {
-        $tagName = $request->input('search');
+{
+    $searchTerm = $request->input('search');
 
-        // Fetch posts that have the specified tag
-        $posts = Post::select('posts.id', 'posts.title', 'posts.image', 'posts.date_posted')
-            ->join('post_tags', 'posts.id', '=', 'post_tags.post_id')
-            ->join('tags', 'post_tags.tag_id', '=', 'tags.id')
-            ->where('tags.name', $tagName)
-            ->paginate(10); // Using pagination for better performance
+    // Fetch unique posts that have the specified tag, title, or category name
+    $posts = Post::select('posts.id', 'posts.title', 'posts.image', 'posts.date_posted')
+        ->join('post_tags', 'posts.id', '=', 'post_tags.post_id')
+        ->join('tags', 'post_tags.tag_id', '=', 'tags.id')
+        ->join('post_categories', 'posts.id', '=', 'post_categories.post_id')
+        ->join('categories', 'post_categories.category_id', '=', 'categories.id')
+        ->where(function($query) use ($searchTerm) {
+            $query->where('tags.name', $searchTerm)
+                  ->orWhere('posts.title', 'like', '%' . $searchTerm . '%')
+                  ->orWhere('categories.name', 'like', '%' . $searchTerm . '%');
+        })
+        ->distinct() // Ensure distinct posts are selected
+        ->paginate(10); // Using pagination for better performance
 
-        // Append the search term to the pagination links
-        $posts->appends(['search' => $tagName]);
+    // Append the search term to the pagination links
+    $posts->appends(['search' => $searchTerm]);
 
-        return view('post', ['posts' => $posts]);
-    }
+    return view('post', ['posts' => $posts]);
+}
 
     /**
      * Show the form for creating a new resource.
