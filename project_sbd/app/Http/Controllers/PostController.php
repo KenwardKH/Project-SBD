@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Post;
+use App\Models\Category;
+use App\Models\Tag;
+use DB;
 
 class PostController extends Controller
 {
@@ -41,16 +44,36 @@ class PostController extends Controller
      */
     public function create()
     {
-        //
+        return view('add-post');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        DB::transaction(function () use ($request) {
+            // Save new post
+            $post = Post::create([
+                'title' => $request->input('title'),
+                'image' => $request->input('image')
+            ]);
+
+            // Save new categories if not exist
+            $categories = explode(',', $request->input('categories'));
+            foreach ($categories as $categoryName) {
+                $category = Category::firstOrCreate(['name' => trim($categoryName)]);
+                $post->categories()->attach($category->id);
+            }
+
+            // Save new tags if not exist
+            $tags = explode(',', $request->input('tags'));
+            foreach ($tags as $tagName) {
+                $tag = Tag::firstOrCreate(['name' => trim($tagName)]);
+                $post->tags()->attach($tag->id);
+            }
+        });
+
+        return redirect('/posts');
     }
+
 
     /**
      * Display the specified resource.
