@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+from urllib.parse import urlparse
 import mysql.connector
 
 # Connect to MySQL database
@@ -25,11 +26,19 @@ def scrape_url(url):
             # Find all articles
             articles = soup.find_all('article')
             
+            
             for article in articles:
-                # Find the article title
+                # Find the article title and slug
                 title_tag = article.find('h2', class_='entry-title')
-                title = title_tag.text.strip() if title_tag else 'N/A'
-                
+                if title_tag:
+                    title = title_tag.text.strip()
+                    full_url = title_tag.find('a')['href'].strip()
+                    parsed_url = urlparse(full_url)
+                    slug = parsed_url.path.strip('/').split('/')[-1]
+                else:
+                    title = 'N/A'
+                    slug = 'N/A'
+
                 # Check if the title already exists in the database
                 cursor.execute("SELECT id FROM Posts WHERE title = %s", (title,))
                 result = cursor.fetchone()
@@ -61,8 +70,8 @@ def scrape_url(url):
 
                 # Insert into Posts table
                 cursor.execute(
-                    "INSERT IGNORE INTO Posts (title, image) VALUES (%s, %s)",
-                    (title, image_url)
+                    "INSERT IGNORE INTO Posts (title, image, slug) VALUES (%s, %s, %s)",
+                    (title, image_url, slug)
                 )
                 post_id = cursor.lastrowid  # Get the ID of the last inserted row
 

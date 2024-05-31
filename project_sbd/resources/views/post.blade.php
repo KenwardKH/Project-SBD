@@ -19,6 +19,7 @@
                 <th>ID</th>
                 <th>Title</th>
                 <th style="width: 250px">Content</th>
+                <th>Slug</th>
                 <th>Date Posted</th>
                 <th>Category</th>
                 <th>Tags</th>
@@ -30,6 +31,7 @@
                     <td>{{ $post->id }}</td>
                     <td>{{ $post->title }}</td>
                     <td class="img text-center"><img class="image" style="width: 250px" src="{{ $post->image }}" alt="image"></td>
+                    <td>{{ $post->slug }}</td>
                     <td>{{ $post->date_posted }}</td>
                     <td>
                         <ul>
