@@ -19,7 +19,8 @@ class Post extends Model
         'title',
         'image',
         'slug',
-        'date_posted',
+        'author_id',
+        'date_updated',
     ];
 
     /**
@@ -27,10 +28,6 @@ class Post extends Model
      *
      * @var array<string, string>
      */
-    protected $casts = [
-        'date_posted' => 'datetime',
-    ];
-
     /**
      * Get the categories for the post.
      */
@@ -45,5 +42,10 @@ class Post extends Model
     public function tags()
     {
         return $this->belongsToMany(Tag::class, 'post_tags', 'post_id', 'tag_id');
+    }
+    
+    public function author()
+    {
+        return $this->belongsTo(Author::class);
     }
 }

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Post;
 use App\Models\Category;
 use App\Models\Tag;
+use App\Models\Author;
 use DB;
 
 class PostController extends Controller
@@ -16,7 +17,7 @@ class PostController extends Controller
     public function index()
     {
         // Fetch all posts from the database
-        $posts = Post::paginate(10);
+        $posts = Post::with('author')->paginate(10);
 
         // Return the view with the posts data
         return view('post', ['posts' => $posts]);
@@ -26,18 +27,22 @@ class PostController extends Controller
 {
     $searchTerm = $request->input('search');
 
-    // Fetch unique posts that have the specified tag, title, or category name
-    $posts = Post::select('posts.id', 'posts.title', 'posts.image', 'posts.date_posted')
-        ->join('post_tags', 'posts.id', '=', 'post_tags.post_id')
-        ->join('tags', 'post_tags.tag_id', '=', 'tags.id')
-        ->join('post_categories', 'posts.id', '=', 'post_categories.post_id')
-        ->join('categories', 'post_categories.category_id', '=', 'categories.id')
+    // Fetch unique post IDs that have the specified tag, title, or category name
+    $postIds = Post::select('posts.id')
+        ->leftJoin('post_tags', 'posts.id', '=', 'post_tags.post_id')
+        ->leftJoin('tags', 'post_tags.tag_id', '=', 'tags.id')
+        ->leftJoin('post_categories', 'posts.id', '=', 'post_categories.post_id')
+        ->leftJoin('categories', 'post_categories.category_id', '=', 'categories.id')
         ->where(function($query) use ($searchTerm) {
-            $query->where('tags.name', $searchTerm)
+            $query->where('tags.name', 'like', '%' . $searchTerm . '%')
                   ->orWhere('posts.title', 'like', '%' . $searchTerm . '%')
-                  ->orWhere  ('categories.name', 'like', '%' . $searchTerm . '%');
+                  ->orWhere('categories.name', 'like', '%' . $searchTerm . '%');
         })
-        ->distinct() // Ensure distinct posts are selected
+        ->distinct()
+        ->pluck('posts.id'); // Get a collection of post IDs
+
+    // Fetch the actual posts based on the distinct post IDs, then paginate
+    $posts = Post::whereIn('id', $postIds)
         ->paginate(10); // Using pagination for better performance
 
     // Append the search term to the pagination links
@@ -46,6 +51,7 @@ class PostController extends Controller
     return view('post', ['posts' => $posts]);
 }
 
+    
     /**
      * Show the form for creating a new resource.
      */

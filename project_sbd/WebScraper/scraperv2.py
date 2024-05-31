@@ -8,7 +8,7 @@ db = mysql.connector.connect(
     host="127.0.0.1",
     user="root",
     password="",
-    database="tubes_sbd"
+    database="web_scraper"
 )
 cursor = db.cursor()
 
@@ -28,16 +28,21 @@ def scrape_url(url):
             
             
             for article in articles:
-                # Find the article title and slug
+                # Find the article title and url
                 title_tag = article.find('h2', class_='entry-title')
                 if title_tag:
                     title = title_tag.text.strip()
                     full_url = title_tag.find('a')['href'].strip()
-                    parsed_url = urlparse(full_url)
-                    slug = parsed_url.path.strip('/').split('/')[-1]
+                    url = full_url
+                    # parsed_url = urlparse(full_url)
+                    # url = parsed_url.path.strip('/').split('/')[-1]
                 else:
                     title = 'N/A'
-                    slug = 'N/A'
+                    url = 'N/A'
+
+                # Check if the title already exists in the database
+                image_tag = article.find('img')
+                image_url = image_tag['data-lazy-srcset'].split(',')[0].split()[0] if image_tag and 'data-lazy-srcset' in image_tag.attrs else 'No image'
 
                 # Check if the title already exists in the database
                 cursor.execute("SELECT id FROM Posts WHERE title = %s", (title,))
@@ -47,49 +52,29 @@ def scrape_url(url):
                     # If title exists, skip this article
                     continue
                 
-                # Find the post meta information containing "Posted in" and categories
-                post_meta = article.find('div', class_='kt-blocks-post-top-meta')
-                if post_meta:
-                    # Find all categories in this article
-                    categories = post_meta.find_all('a', rel='category tag')
-                    category_list = [cat.text.strip().replace(' Travel', '') for cat in categories]  # Remove ' Travel' from category names
-                else:
-                    category_list = []
-
-                # Find additional tags at the bottom of the article
-                tags_meta = article.find('div', class_='kt-blocks-tags kt-blocks-post-footer-section')
-                if tags_meta:
-                    tags = tags_meta.find_all('a', rel='tag')
-                    tags_list = [tag.text.strip() for tag in tags]
-                else:
-                    tags_list = []
-
-                # Find the image URL
-                image_tag = article.find('img')
-                image_url = image_tag['data-lazy-srcset'].split(',')[0].split()[0] if image_tag and 'data-lazy-srcset' in image_tag.attrs else 'No image'
-
+                
                 # Insert into Posts table
                 cursor.execute(
-                    "INSERT IGNORE INTO Posts (title, image, slug) VALUES (%s, %s, %s)",
-                    (title, image_url, slug)
+                    "INSERT IGNORE INTO Posts (title, url, image) VALUES (%s, %s, %s)",
+                    (title, url, image_url)
                 )
-                post_id = cursor.lastrowid  # Get the ID of the last inserted row
+                # post_id = cursor.lastrowid  # Get the ID of the last inserted row
 
-                # Insert into Categories and PostCategories
-                for category in category_list:
-                    cursor.execute("INSERT IGNORE INTO Categories (name) VALUES (%s)", (category,))
-                    cursor.execute(
-                        "INSERT INTO Post_Categories (post_id, category_id) VALUES (%s, (SELECT id FROM Categories WHERE name = %s))",
-                        (post_id, category)
-                    )
+                # # Insert into Categories and PostCategories
+                # for category in category_list:
+                #     cursor.execute("INSERT IGNORE INTO Categories (name) VALUES (%s)", (category,))
+                #     cursor.execute(
+                #         "INSERT INTO Post_Categories (post_id, category_id) VALUES (%s, (SELECT id FROM Categories WHERE name = %s))",
+                #         (post_id, category)
+                #     )
 
-                # Insert into Tags and PostTags
-                for tag in tags_list:
-                    cursor.execute("INSERT IGNORE INTO Tags (name) VALUES (%s)", (tag,))
-                    cursor.execute(
-                        "INSERT INTO Post_Tags (post_id, tag_id) VALUES (%s, (SELECT id FROM Tags WHERE name = %s))",
-                        (post_id, tag)
-                    )
+                # # Insert into Tags and PostTags
+                # for tag in tags_list:
+                #     cursor.execute("INSERT IGNORE INTO Tags (name) VALUES (%s)", (tag,))
+                #     cursor.execute(
+                #         "INSERT INTO Post_Tags (post_id, tag_id) VALUES (%s, (SELECT id FROM Tags WHERE name = %s))",
+                #         (post_id, tag)
+                #     )
 
             # Commit the transaction to the database after processing all articles
             db.commit()
@@ -115,5 +100,16 @@ scrape_url('https://www.divergenttravelers.com/polar-expedition-travel/')
 scrape_url('https://www.divergenttravelers.com/road-trips/')
 scrape_url('https://www.divergenttravelers.com/tropical-destinations/')
 scrape_url('https://www.divergenttravelers.com/wildlife-experiences/')
+scrape_url('https://www.divergenttravelers.com/category/botswana/')
+scrape_url('https://www.divergenttravelers.com/category/china/')
+scrape_url('https://www.divergenttravelers.com/category/india/')
+scrape_url('https://www.divergenttravelers.com/category/kyrgyzstan/')
+scrape_url('https://www.divergenttravelers.com/category/indonesia/')
+scrape_url('https://www.divergenttravelers.com/category/indonesia/page/2/')
+scrape_url('https://www.divergenttravelers.com/category/indonesia/page/3/')
+scrape_url('https://www.divergenttravelers.com/category/borneo/')
+scrape_url('https://www.divergenttravelers.com/category/north-america/usa/minnesota/')
+scrape_url('https://www.divergenttravelers.com/category/north-america/usa/montana/')
+
 cursor.close()
 db.close()

@@ -18,8 +18,9 @@ class CreatePostsTable extends Migration
             $table->string('title');
             $table->text('image');
             $table->text('slug')->nullable();
-            $table->timestamp('date_posted');
-            $table->timestamps();
+            $table->date('date_updated');
+            $table->unsignedBigInteger('author_id');
+            $table->foreign('author_id')->references('id')->on('authors')->onDelete('cascade');
         });
     }
 

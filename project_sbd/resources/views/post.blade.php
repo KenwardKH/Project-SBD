@@ -20,9 +20,10 @@
                 <th>Title</th>
                 <th style="width: 250px">Content</th>
                 <th>Slug</th>
-                <th>Date Posted</th>
+                <th>Date Updated</th>
                 <th>Category</th>
                 <th>Tags</th>
+                <th>Author</th>
             </tr>
         </thead>
         <tbody>
@@ -32,7 +33,7 @@
                     <td>{{ $post->title }}</td>
                     <td class="img text-center"><img class="image" style="width: 250px" src="{{ $post->image }}" alt="image"></td>
                     <td>{{ $post->slug }}</td>
-                    <td>{{ $post->date_posted }}</td>
+                    <td>{{ $post->date_updated }}</td>
                     <td>
                         <ul>
                             @foreach ($post->categories as $category)
@@ -47,6 +48,7 @@
                             @endforeach
                         </ul>
                     </td>
+                    <td>{{ $post->author->name }}</td>
                 </tr>
             @endforeach
         </tbody>
