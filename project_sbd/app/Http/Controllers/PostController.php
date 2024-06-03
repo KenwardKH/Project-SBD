@@ -32,6 +32,8 @@ class PostController extends Controller
         $category = $request->input('category');
         $tag = $request->input('tag');
         $title = $request->input('title');
+        $sort = $request->input('sort', 'date_updated');
+        $direction = $request->input('direction', 'asc');
 
         // Fetch posts based on search criteria
         $query = Post::query();
@@ -52,6 +54,10 @@ class PostController extends Controller
             $query->where('title', 'like', '%' . $title . '%');
         }
 
+        if ($sort && in_array($sort, ['id', 'date_updated'])) {
+            $query->orderBy($sort, $direction);
+        }
+
         $posts = $query->paginate(10);
 
         // Append search terms to the pagination links
@@ -59,6 +65,8 @@ class PostController extends Controller
             'category' => $category,
             'tag' => $tag,
             'title' => $title,
+            'sort' => $sort,
+            'direction' => $direction,
         ]);
 
         // Fetch categories and tags for dropdowns
@@ -67,6 +75,7 @@ class PostController extends Controller
 
         return view('post', ['posts' => $posts, 'categories' => $categories, 'tags' => $tags]);
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -77,34 +86,34 @@ class PostController extends Controller
     }
 
     public function store(Request $request)
-{
-    DB::transaction(function () use ($request) {
-        // Save new post with the current date and time
-        $post = Post::create([
-            'title' => $request->input('title'),
-            'image' => $request->input('image'),
-            'slug' => $request->input('slug'),
-            'author_id' => $request->input('author'),
-            'date_updated' => now(), // Set date_updated to the current date and time
-        ]);
+    {
+        DB::transaction(function () use ($request) {
+            // Save new post with the current date and time
+            $post = Post::create([
+                'title' => $request->input('title'),
+                'image' => $request->input('image'),
+                'slug' => $request->input('slug'),
+                'author_id' => $request->input('author'),
+                'date_updated' => now(), // Set date_updated to the current date and time
+            ]);
 
-        // Save new categories if not exist
-        $categories = explode(',', $request->input('categories'));
-        foreach ($categories as $categoryName) {
-            $category = Category::firstOrCreate(['name' => trim($categoryName)]);
-            $post->categories()->attach($category->id);
-        }
+            // Save new categories if not exist
+            $categories = explode(',', $request->input('categories'));
+            foreach ($categories as $categoryName) {
+                $category = Category::firstOrCreate(['name' => trim($categoryName)]);
+                $post->categories()->attach($category->id);
+            }
 
-        // Save new tags if not exist
-        $tags = explode(',', $request->input('tags'));
-        foreach ($tags as $tagName) {
-            $tag = Tag::firstOrCreate(['name' => trim($tagName)]);
-            $post->tags()->attach($tag->id);
-        }
-    });
+            // Save new tags if not exist
+            $tags = explode(',', $request->input('tags'));
+            foreach ($tags as $tagName) {
+                $tag = Tag::firstOrCreate(['name' => trim($tagName)]);
+                $post->tags()->attach($tag->id);
+            }
+        });
 
-    return redirect('/posts');
-}
+        return redirect('/posts');
+    }
 
 
     /**

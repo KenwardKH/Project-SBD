@@ -36,11 +36,33 @@
         <table border="solid">
             <thead>
                 <tr>
-                    <th>ID</th>
+                    <th>
+                        <a href="{{ route('posts.search', array_merge(request()->all(), ['sort' => 'id', 'direction' => request('direction') == 'asc' ? 'desc' : 'asc'])) }}">
+                            ID
+                            @if (request('sort') == 'id')
+                                @if (request('direction') == 'asc')
+                                    &#9650; <!-- Up arrow -->
+                                @else
+                                    &#9660; <!-- Down arrow -->
+                                @endif
+                            @endif
+                        </a>
+                    </th>
                     <th>Title</th>
                     <th style="width: 250px">Content</th>
                     <th>Slug</th>
-                    <th>Date Updated</th>
+                    <th>
+                        <a href="{{ route('posts.search', array_merge(request()->all(), ['sort' => 'date_updated', 'direction' => request('direction') == 'asc' ? 'desc' : 'asc'])) }}">
+                            Date Updated
+                            @if (request('sort') == 'date_updated')
+                                @if (request('direction') == 'asc')
+                                    &#9650; <!-- Up arrow -->
+                                @else
+                                    &#9660; <!-- Down arrow -->
+                                @endif
+                            @endif
+                        </a>
+                    </th>
                     <th>Category</th>
                     <th>Tags</th>
                     <th>Author</th>
