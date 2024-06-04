@@ -27,6 +27,21 @@ class PostController extends Controller
         return view('post', ['posts' => $posts, 'categories' => $categories, 'tags' => $tags]);
     }
 
+
+    public function monthlyPostUpdates()
+    {
+        $monthlyUpdates = Post::select(
+                DB::raw('IF((YEAR(date_updated) < 2020), "Before 2020", CONCAT(YEAR(date_updated), "-", LPAD(MONTH(date_updated), 2, "0"))) as period'),
+                DB::raw('COUNT(*) as count')
+            )
+            ->groupBy('period')
+            ->orderByRaw('MIN(date_updated)')
+            ->get();
+    
+        return view('monthly-post-updates', compact('monthlyUpdates'));
+    }
+    
+
     public function postsWithTag(Request $request)
     {
         $category = $request->input('category');
