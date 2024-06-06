@@ -6,8 +6,10 @@
 
 @section('content')
 <div class="container">
-    <h1>Post Counts per Tag</h1>
-    <canvas id="tagPostCountsChart" width="400" height="200"></canvas>
+    <h1>Post Counts per Category</h1>
+    <div style="overflow-x: auto; white-space: nowrap;">
+        <canvas id="tagPostCountsChart"></canvas>
+    </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -18,6 +20,14 @@
         
         const cats = catUpdates.map(update => update.cat);
         const counts = catUpdates.map(update => update.count);
+
+        // Calculate canvas width based on number of categories
+        const canvasWidth = cats.length * 24; // Adjust 50 as needed
+
+        // Set canvas width and a fixed height
+        const canvas = document.getElementById('tagPostCountsChart');
+        canvas.width = canvasWidth;
+        canvas.height = 700; // Set a fixed height
 
         const chart = new Chart(ctx, {
             type: 'bar',
@@ -32,6 +42,7 @@
                 }]
             },
             options: {
+                responsive: false,
                 scales: {
                     y: {
                         beginAtZero: true
