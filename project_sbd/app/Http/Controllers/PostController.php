@@ -40,6 +40,35 @@ class PostController extends Controller
     
         return view('monthly-post-updates', compact('monthlyUpdates'));
     }
+    public function ShowTagPosts()
+    {
+        $tagUpdates = DB::table('post_tags')
+            ->join('tags', 'post_tags.tag_id', '=', 'tags.id')
+            ->select(
+                'tags.name as tag',
+                DB::raw('COUNT(post_tags.post_id) as count')
+            )
+            ->groupBy('tags.name')
+            ->orderBy('count','desc')
+            ->get();
+
+        return view('show-tag-posts', compact('tagUpdates'));
+    }
+    public function ShowCatPosts()
+    {
+        $catUpdates = DB::table('post_categories')
+            ->join('categories', 'post_categories.category_id', '=', 'categories.id')
+            ->select(
+                'categories.name as cat',
+                DB::raw('COUNT(post_categories.post_id) as count')
+            )
+            ->groupBy('categories.name')
+            ->orderBy('count','desc')
+            ->get();
+
+        return view('show-cat-posts', compact('catUpdates'));
+    }
+
     
 
     public function postsWithTag(Request $request)
