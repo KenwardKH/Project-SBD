@@ -68,6 +68,20 @@ class PostController extends Controller
 
         return view('show-cat-posts', compact('catUpdates'));
     }
+    public function ShowAutPosts()
+    {
+        $autUpdates = DB::table('posts')
+            ->join('authors', 'posts.author_id', '=', 'authors.id')
+            ->select(
+                'authors.name as aut',
+                DB::raw('COUNT(posts.id) as count')
+            )
+            ->groupBy('authors.name')
+            ->orderBy('count','desc')
+            ->get();
+
+        return view('show-aut-posts', compact('autUpdates'));
+    }
 
     
 
