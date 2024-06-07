@@ -35,10 +35,9 @@
         <div class="input">
             <label for="author">Author</label>
             <select name="author" id="author">
-                <option value="1">Lina Stock</option>
-                <option value="2">Heather Halpern</option>
-                <option value="3">David Stock</option>
-                <option value="4">Guest Writer</option>
+                @foreach($authors as $author)
+                    <option value="{{ $author->id }}">{{ $author->name }}</option>
+                @endforeach
             </select>
         </div>
         <button class="btn btn-primary" type="submit">Create Post</button>

@@ -64,6 +64,18 @@
                             </a>
                         </li>
                         <li class="sidebar-item">
+                            <a class="sidebar-link waves-effect waves-dark sidebar-link" href="/add-post" aria-expanded="false">
+                                <i class="bi bi-plus-circle"></i>
+                                <span class="hide-menu">Add Post</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link waves-effect waves-dark sidebar-link" href="/add-author" aria-expanded="false">
+                                <i class="bi bi-plus-circle"></i>
+                                <span class="hide-menu">Add Author</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
                             <a class="sidebar-link waves-effect waves-dark sidebar-link" href="/monthly-post-updates" aria-expanded="false">
                                 <i class="fa fa-columns" aria-hidden="true"></i>
                                 <span class="hide-menu">Mounthly Post Update</span>
@@ -87,12 +99,7 @@
                                 <span class="hide-menu"># of Post/Author</span>
                             </a>
                         </li>
-                        <li class="sidebar-item">
-                            <a class="sidebar-link waves-effect waves-dark sidebar-link" href="/add-post" aria-expanded="false">
-                                <i class="bi bi-plus-circle"></i>
-                                <span class="hide-menu">Add Post</span>
-                            </a>
-                        </li>
+                        
                         <li class="sidebar-item">
                             <a class="sidebar-link waves-effect waves-dark sidebar-link" href="404.html" aria-expanded="false">
                                 <i class="fa fa-info-circle" aria-hidden="true"></i>

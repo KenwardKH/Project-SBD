@@ -7,6 +7,7 @@ use App\Models\Post;
 use App\Models\Category;
 use App\Models\Tag;
 use App\Models\Author;
+use App\Models\Comment;
 use DB;
 
 class PostController extends Controller
@@ -22,9 +23,10 @@ class PostController extends Controller
         // Fetch categories and tags for dropdowns
         $categories = Category::all();
         $tags = Tag::all();
-
+        $authors = Author::all();
+        $comments = Comment::all();
         // Return the view with the posts, categories, and tags data
-        return view('post', ['posts' => $posts, 'categories' => $categories, 'tags' => $tags]);
+        return view('post', ['posts' => $posts, 'categories' => $categories, 'tags' => $tags,'authors' => $authors,'comments' => $comments]);
     }
 
 
@@ -140,7 +142,8 @@ class PostController extends Controller
      */
     public function create()
     {
-        return view('add-post');
+        $authors = Author::all(); // Fetch all authors from the database
+        return view('add-post', compact('authors')); // Pass authors to the view
     }
 
     public function store(Request $request)
