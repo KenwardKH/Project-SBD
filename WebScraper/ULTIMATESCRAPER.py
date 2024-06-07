@@ -23,6 +23,55 @@ def get_author_id(author_name):
         db.commit()
         return cursor.lastrowid
 
+def get_tag_id(tag_name):
+    cursor.execute("SELECT id FROM Tags WHERE name = %s", (tag_name,))
+    result = cursor.fetchone()
+    if result:
+        return result[0]
+    else:
+        cursor.execute("INSERT INTO Tags (name) VALUES (%s)", (tag_name,))
+        db.commit()
+        return cursor.lastrowid
+
+def insert_comment(comment, post_id, reply_to=None):
+    comment_author_tag = comment.find('cite', class_='fn')
+    comment_author = comment_author_tag.text.strip() if comment_author_tag else 'N/A'
+    comment_date_tag = comment.find('time')
+    comment_date = comment_date_tag['datetime'] if comment_date_tag else datetime.now().isoformat()
+    comment_content_tag = comment.find('div', class_='comment-content')
+    comment_content = comment_content_tag.text.strip() if comment_content_tag else 'N/A'
+
+    # Strip the reply link and word "Reply" from the comment content
+    reply_link = comment_content_tag.find('span', class_='reply')
+    if reply_link:
+        reply_link.extract()
+    comment_content = comment_content.replace('Reply', '').strip()
+
+    # Check if a comment with the same author, date, and content already exists
+    cursor.execute(
+        "SELECT id FROM Comments WHERE author = %s AND date = %s AND content = %s",
+        (comment_author, comment_date, comment_content)
+    )
+    existing_comment = cursor.fetchone()
+    if existing_comment:
+        return existing_comment[0]  # Return the ID of the existing comment
+
+    # If the comment doesn't exist, insert it into the database
+    cursor.execute(
+        "INSERT INTO Comments (author, date, content, post_id, reply_to) VALUES (%s, %s, %s, %s, %s)",
+        (comment_author, comment_date, comment_content, post_id, reply_to)
+    )
+    return cursor.lastrowid
+
+def scrape_comments(comments, post_id, reply_to=None):
+    for comment in comments:
+        comment_id = insert_comment(comment, post_id, reply_to)
+        replies = comment.find('ul', class_='children')
+        if replies:
+            reply_comments = replies.find_all('li', class_='comment')
+            # Recursively scrape nested replies
+            scrape_comments(reply_comments, post_id, comment_id)
+
 def scrape_url(url, image_url):
     try:
         response = requests.get(url)
@@ -82,26 +131,15 @@ def scrape_url(url, image_url):
 
             if tags_list:
                 for tag in tags_list:
-                    cursor.execute("INSERT IGNORE INTO Tags (name) VALUES (%s)", (tag,))
+                    tag_id = get_tag_id(tag)
                     cursor.execute(
-                        "INSERT INTO Post_Tags (post_id, tag_id) VALUES (%s, (SELECT id FROM Tags WHERE name = %s))",
-                        (post_id, tag)
+                        "INSERT INTO Post_Tags (post_id, tag_id) VALUES (%s, %s)",
+                        (post_id, tag_id)
                     )
             
-            # Scrape comments
-            comments_section = soup.find_all('article', class_='comment-body')
-            for comment in comments_section:
-                comment_author_tag = comment.find('cite', class_='fn')
-                comment_author = comment_author_tag.text.strip() if comment_author_tag else 'N/A'
-                comment_date_tag = comment.find('time', class_='comment-time')
-                comment_date = comment_date_tag['datetime'] if comment_date_tag else datetime.now().isoformat()
-                comment_content_tag = comment.find('div', class_='comment-content')
-                comment_content = comment_content_tag.text.strip() if comment_content_tag else 'N/A'
-                
-                cursor.execute(
-                    "INSERT INTO Comments (author, date, content, post_id) VALUES (%s, %s, %s, %s)",
-                    (comment_author, comment_date, comment_content, post_id)
-                )
+            # Scrape comments and replies
+            comments_section = soup.find_all('li', class_='comment')
+            scrape_comments(comments_section, post_id)
 
             db.commit()
 
