@@ -1,15 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('layout')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-    <link rel="stylesheet" href="{{ asset('css/add-post.css') }}">
-</head>
+@section('title', 'Dashboard')
 
-<body>
+@section('page-title', 'Add Post')
+
+@section('content')
+<link rel="stylesheet" href="{{ asset('css/add-post.css') }}">
     <div class="container">
         <form action="/add-post" method="POST" class="main">
         @csrf
@@ -45,10 +41,8 @@
                 <option value="4">Guest Writer</option>
             </select>
         </div>
-        <button type="submit">Create Post</button>
+        <button class="btn btn-primary" type="submit">Create Post</button>
     </form>
     </div>
     
-</body>
-
-</html>
+@endsection

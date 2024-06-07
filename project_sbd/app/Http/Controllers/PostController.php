@@ -195,7 +195,38 @@ class PostController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        DB::transaction(function () use ($request, $id) {
+            $post = Post::findOrFail($id);
+
+            // Update post details
+            $post->update([
+                'title' => $request->input('title'),
+                'image' => $request->input('image'),
+                'slug' => $request->input('slug'),
+                'author_id' => $request->input('author'),
+                'date_updated' => now(), // Set date_updated to the current date and time
+            ]);
+
+            // Update categories
+            $categories = explode(',', $request->input('categories'));
+            $categoryIds = [];
+            foreach ($categories as $categoryName) {
+                $category = Category::firstOrCreate(['name' => trim($categoryName)]);
+                $categoryIds[] = $category->id;
+            }
+            $post->categories()->sync($categoryIds);
+
+            // Update tags
+            $tags = explode(',', $request->input('tags'));
+            $tagIds = [];
+            foreach ($tags as $tagName) {
+                $tag = Tag::firstOrCreate(['name' => trim($tagName)]);
+                $tagIds[] = $tag->id;
+            }
+            $post->tags()->sync($tagIds);
+        });
+
+        return redirect('/');
     }
 
     /**
@@ -203,6 +234,11 @@ class PostController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $post = Post::findOrFail($id);
+        $post->categories()->detach();
+        $post->tags()->detach();
+        $post->delete();
+
+        return redirect('/');
     }
 }
