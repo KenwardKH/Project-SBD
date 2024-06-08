@@ -3,6 +3,10 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\AuthorController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\TagController;
+
+
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -14,6 +18,8 @@ use App\Http\Controllers\AuthorController;
 Route::get('/add-author', function () {
     return view('add-author');
 });
+Route::get('/category', [CategoryController::class, 'index'])->name('categories.index');
+Route::get('/tag', [TagController::class, 'index'])->name('tags.index');
 Route::get('/', [PostController::class, 'index']);
 Route::get('/add-post', [PostController::class, 'create']);
 Route::post('/add-post',[PostController::class, 'store']);

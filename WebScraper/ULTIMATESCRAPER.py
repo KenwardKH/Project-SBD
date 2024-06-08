@@ -32,6 +32,16 @@ def get_tag_id(tag_name):
         cursor.execute("INSERT INTO Tags (name) VALUES (%s)", (tag_name,))
         db.commit()
         return cursor.lastrowid
+    
+def get_category_id(category_name):
+    cursor.execute("SELECT id FROM Categories WHERE name = %s", (category_name,))
+    result = cursor.fetchone()
+    if result:
+        return result[0]
+    else:
+        cursor.execute("INSERT INTO Categories (name) VALUES (%s)", (category_name,))
+        db.commit()
+        return cursor.lastrowid
 
 def insert_comment(comment, post_id, reply_to=None):
     comment_author_tag = comment.find('cite', class_='fn')
@@ -123,10 +133,10 @@ def scrape_url(url, image_url):
 
             if category_list:
                 for category in category_list:
-                    cursor.execute("INSERT IGNORE INTO Categories (name) VALUES (%s)", (category,))
+                    category_id = get_category_id(category)
                     cursor.execute(
-                        "INSERT INTO Post_Categories (post_id, category_id) VALUES (%s, (SELECT id FROM Categories WHERE name = %s))",
-                        (post_id, category)
+                        "INSERT INTO Post_Categories (post_id, category_id) VALUES (%s, %s)",
+                        (post_id, category_id)
                     )
 
             if tags_list:

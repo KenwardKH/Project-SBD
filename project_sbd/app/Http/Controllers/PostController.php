@@ -132,8 +132,9 @@ class PostController extends Controller
         // Fetch categories and tags for dropdowns
         $categories = Category::all();
         $tags = Tag::all();
+        $authors = Author::all();
 
-        return view('post', ['posts' => $posts, 'categories' => $categories, 'tags' => $tags]);
+        return view('post', ['posts' => $posts, 'categories' => $categories, 'tags' => $tags,'authors' => $authors]);
     }
 
 
