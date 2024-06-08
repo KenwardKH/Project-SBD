@@ -1,17 +1,16 @@
 @extends('layout')
 
-@section('title', 'Dashboard')
+@section('title', 'Post')
 
-@section('page-title', 'Dashboard')
+@section('page-title', 'Post Table')
 
 @section('content')
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <h1>Post</h1>
     <form action="{{ route('posts.search') }}" method="GET">
-        <div>
+        <div style="margin-bottom: 10px">
             <select name="category">
                 <option value="">Select Category</option>
                 @foreach ($categories as $category)
@@ -37,7 +36,7 @@
                 type="submit">Search</button>
         </div>
     </form>
-    <table border="solid" style="width: 90%;">
+    <table border="solid" style="width: 100%;">
         <thead style="text-align: center">
             <tr>
                 <th>
@@ -104,7 +103,7 @@
                             <button class="edit" data-toggle="modal" data-target="#update{{ $post->id }}">
                                 <i class="bi bi-pencil-fill"></i>
                             </button>
-                            <form action="{{ route('delete-post', ['id' => $post->id]) }}" method="GET">
+                            <form action="{{ route('delete-post', ['id' => $post->id]) }}" method="GET" style="display: flex; align-items:end">
                                 @method('DELETE')
                                 @csrf
                                 <input type="hidden" name="id" value="{{ $post->id }}">

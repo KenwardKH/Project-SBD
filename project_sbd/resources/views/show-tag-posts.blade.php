@@ -1,12 +1,11 @@
 @extends('layout')
 
-@section('title', 'Dashboard')
+@section('title', 'Post Counts per Tag')
 
-@section('page-title', 'Dashboard')
+@section('page-title', 'Post Counts per Tag')
 
 @section('content')
 <div class="container">
-    <h1>Post Counts per Tag</h1>
     <canvas id="tagPostCountsChart" width="400" height="200"></canvas>
 </div>
 

@@ -1,12 +1,11 @@
 @extends('layout')
 
-@section('title', 'Dashboard')
+@section('title', 'Monthly Post Updates')
 
-@section('page-title', 'Dashboard')
+@section('page-title', 'Monthly Post Updates')
 
 @section('content')
 <div class="container">
-    <h1>Monthly Post Updates</h1>
     <canvas id="monthlyPostUpdatesChart" width="400" height="200"></canvas>
 </div>
 

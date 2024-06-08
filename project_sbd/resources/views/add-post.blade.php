@@ -1,6 +1,6 @@
 @extends('layout')
 
-@section('title', 'Dashboard')
+@section('title', 'Add Post')
 
 @section('page-title', 'Add Post')
 

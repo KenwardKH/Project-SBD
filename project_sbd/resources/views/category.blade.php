@@ -2,10 +2,9 @@
 
 @section('title', 'Categories')
 
-@section('page-title', 'Dashboard')
+@section('page-title', 'Category Table')
 
 @section('content')
-    <h1>Category Table</h1>
     <table>
         <thead style="text-align: center">
             <th><a href="{{ route('categories.index', ['sort' => 'id', 'direction' => request('direction') == 'asc' ? 'desc' : 'asc']) }}">ID</a></th>

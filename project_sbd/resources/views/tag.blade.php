@@ -2,10 +2,9 @@
 
 @section('title', 'Tags')
 
-@section('page-title', 'Dashboard')
+@section('page-title', 'Tag Table')
 
 @section('content')
-    <h1>Tag Table</h1>
     <table>
         <thead style="text-align: center">
             <th><a href="{{ route('tags.index', ['sort' => 'id', 'direction' => request('direction') == 'asc' ? 'desc' : 'asc']) }}">ID</a></th>

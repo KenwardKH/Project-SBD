@@ -1,12 +1,11 @@
 @extends('layout')
 
-@section('title', 'Dashboard')
+@section('title', 'Post Counts per Author')
 
-@section('page-title', 'Dashboard')
+@section('page-title', 'Post Counts per Author')
 
 @section('content')
 <div class="container">
-    <h1>Post Counts per Author</h1>
     <canvas id="autPostCountsChart" width="400" height="200"></canvas>
 </div>
 
