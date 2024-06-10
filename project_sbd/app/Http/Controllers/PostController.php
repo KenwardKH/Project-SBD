@@ -174,7 +174,7 @@ class PostController extends Controller
             }
         });
 
-        return redirect('/posts');
+        return redirect('/');
     }
 
 
